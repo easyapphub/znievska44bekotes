@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>20 Modulos Legrand Elosztószekrény — Interaktív Bekötési Tervrajz</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-light: #334155;
+      --border: #475569;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --phase: #b45309;
+      --phase-bright: #f59e0b;
+      --neutral: #2563eb;
+      --neutral-bright: #60a5fa;
+      --pe: #16a34a;
+      --pe-bright: #4ade80;
+      --accent: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    header p {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      background: var(--panel-light);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #475569;
+    }
+
+    button.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 20px;
+      padding: 20px 24px;
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .board-container {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    .board-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #1e293b;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .busbars-top, .busbars-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .busbar {
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.2s;
+    }
+
+    .busbar.pe {
+      background: #dcfce7;
+      color: #14532d;
+      border-color: #16a34a;
+    }
+
+    .busbar.n {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-color: #2563eb;
+    }
+
+    .busbar:hover, .busbar.selected {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .screws {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .screw {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #94a3b8;
+      border: 1px solid #475569;
+    }
+
+    .din-row-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #475569;
+      margin: 10px 0 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .din-rail {
+      background: #cbd5e1;
+      border: 2px solid #94a3b8;
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(56px, 1fr));
+      gap: 4px;
+      position: relative;
+    }
+
+    .module {
+      background: #f8fafc;
+      border: 2px solid #94a3b8;
+      border-radius: 6px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 132px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      user-select: none;
+    }
+
+    .module.double {
+      grid-column: span 2;
+    }
+
+    .module.blank {
+      background: #e2e8f0;
+      border-style: dashed;
+      cursor: default;
+    }
+
+    .module:hover:not(.blank) {
+      border-color: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    .module.selected {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.35);
+      background: #f0f9ff;
+    }
+
+    .mod-num {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #475569;
+      background: #e2e8f0;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .mod-brand {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .mod-rating {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .mod-sub {
+      font-size: 0.63rem;
+      text-align: center;
+      color: #334155;
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .switch-lever {
+      width: 34px;
+      height: 18px;
+      border-radius: 4px;
+      background: #1e293b;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      transition: 0.2s;
+    }
+
+    .switch-lever.on {
+      background: #16a34a;
+    }
+
+    .switch-lever.off {
+      background: #dc2626;
+    }
+
+    .switch-lever.main {
+      background: #dc2626;
+    }
+
+    .test-btn {
+      background: #facc15;
+      color: #0f172a;
+      border: 1px solid #ca8a04;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+
+    .comb-bar {
+      margin-top: 6px;
+      background: linear-gradient(90deg, #b45309, #d97706);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .info-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .card p, .card li {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #cbd5e1;
+    }
+
+    .card ul {
+      padding-left: 18px;
+      margin-top: 6px;
+    }
+
+    .wire-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .w-l { background: #78350f; color: #fde68a; border: 1px solid #f59e0b; }
+    .w-n { background: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; }
+    .w-pe { background: #14532d; color: #bbf7d0; border: 1px solid #22c55e; }
+
+    .status-banner {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #14532d;
+      color: #bbf7d0;
+      border: 1px solid #22c55e;
+    }
+
+    .status-banner.tripped {
+      background: #7f1d1d;
+      color: #fecaca;
+      border-color: #ef4444;
+    }
+
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(241, 245, 249, 0.92);
+      border-radius: 16px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .cover-overlay.visible {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>20 Modulos Legrand Biztosítékszekrény — 1:1 Bekötési Tervrajz</h1>
+      <p>Kattints bármelyik modulra, sínre vagy a „T” tesztgombra a bekötés és az áramút megtekintéséhez!</p>
+    </div>
+    <div class="controls">
+      <button id="toggleCoverBtn">Burkolat felrakása / levétele</button>
+      <button id="testRcdBtn">FI-relé „T” Teszt</button>
+      <button id="resetAllBtn">Minden visszakapcsolása</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="board-container">
+      <div id="coverOverlay" class="cover-overlay">
+        <h2 style="color:#0f172a; margin-bottom:8px;">Műanyag fedlap felszerelve</h2>
+        <p style="color:#475569; max-width:420px; margin-bottom:16px;">
+          Zárt állapotban csak a kismegszakítók billenőkarjai és a feliratok látszanak. Vedd le a fedlapot a belső bekötésekhez!
+        </p>
+        <button onclick="toggleCover()" style="background:#0284c7; color:#fff; border:none;">Fedlap levétele (Belső nézet)</button>
+      </div>
+
+      <div class="board-header">
+        <div class="board-title">ELOSZTÓSZEKRÉNY BELSEJE (NYITOTT ÁLLAPOT)</div>
+        <div class="legend">
+          <span><i class="dot" style="background:#b45309;"></i> Fázis (L)</span>
+          <span><i class="dot" style="background:#2563eb;"></i> Nulla (N)</span>
+          <span><i class="dot" style="background:#16a34a;"></i> Védőföld (PE)</span>
+        </div>
+      </div>
+
+      <!-- Gyűjtősínek -->
+      <div class="busbars-top">
+        <div class="busbar pe" id="peBusbar" onclick="selectItem('pe')">
+          <div>ZÖLD-SÁRGA SÍN (PE — Védőföldelés)</div>
+          <div style="font-size:0.72rem; font-weight:500;">Ide fut be a fő földelés + a lakás összes zöld-sárga vezetéke</div>
+          <div class="screws">
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+          </div>
+        </div>
+        <div class="busbar n" id="nBusbar" onclick="selectItem('n')">
+          <div>KÉK SÍN (N — Nulla gyűjtősín az FI-relé után)</div>
+          <div style="font-size:0.72rem; font-weight:500;">Az 4–5-ös FI-reléből kijövő nulla + a lakás összes kék szálja</div>
+          <div class="screws">
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+            <span class="screw"></span><span class="screw"></span><span class="screw"></span><span class="screw"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Felső DIN sín -->
+      <div class="din-row-label">Felső sor (1–12. modul)</div>
+      <div class="din-rail" id="topRail"></div>
+      <div class="comb-bar" onclick="selectItem('combTop')">
+        RÉZ FÉSŰSÍN (Felső sor) — Az FI-relé fázisát (L) osztja szét a 6–12. kismegszakítók aljára
+      </div>
+
+      <!-- Alsó DIN sín -->
+      <div class="din-row-label" style="margin-top:18px;">Alsó sor (13–20. modul + 4 db vakfedél)</div>
+      <div class="din-rail" id="bottomRail"></div>
+      <div class="comb-bar" onclick="selectItem('combBottom')">
+        RÉZ FÉSŰSÍN (Alsó sor) — Átkötő kábellel kapja a fázist (L), és osztja szét a 13–20. kismegszakítók aljára
+      </div>
+    </div>
+
+    <!-- Jobb oldali magyarázó panel -->
+    <div class="info-panel">
+      <div id="statusBanner" class="status-banner">
+        Rendszer állapota: BEKAPCSOLVA (32A Főkapcsoló + 25A/30mA FI-relé aktív)
+      </div>
+
+      <div class="card" id="detailCard">
+        <h2 id="detailTitle">Kattints bármelyik modulra a részletekért!</h2>
+        <p id="detailDesc">
+          A bal oldali szekrényben pontosan a fotóidon szereplő 20 modulos Legrand kiosztást látod. Kattints egy biztosítékra, a csengőtrafóra, a túlfeszültség-levezetőre vagy a sínekre!
+        </p>
+        <div id="detailWires" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Áramút összefoglaló (Fentről lefelé)</h2>
+        <ul>
+          <li><strong>Bejövő főkábel:</strong> A <span class="wire-tag w-pe">PE</span> a zöld-sárga sínbe megy, a <span class="wire-tag w-l">L</span> és <span class="wire-tag w-n">N</span> a <strong>3-as Főkapcsolóba</strong> érkezik.</li>
+          <li><strong>Védelem:</strong> A 3-asból az <strong>4–5-ös FI-relébe (30mA)</strong> megy az áram. Innen a <span class="wire-tag w-n">N</span> a kék sínbe, a <span class="wire-tag w-l">L</span> pedig a két sor <strong>fésűsínjébe</strong> jut.</li>
+          <li><strong>Szobák és gépek:</strong> Minden kismegszakító tetejéből <strong>csak a barna fázis (<span class="wire-tag w-l">L</span>)</strong> indul a szobába; a kék és zöld-sárga szál közvetlenül a felső sínekből indul.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const modules = [
+      {
+        id: '1', row: 'top', span: 1, brand: 'Legrand', rating: '8/12V~', sub: 'Csengőtrafó', state: true, toggleable: false,
+        title: '1. modul — Csengőtrafó (8/12V~)',
+        desc: 'A 230 V-os hálózati feszültséget biztonságos, törpefeszültségű 8 V vagy 12 V váltakozó árammá alakítja át a bejárati ajtó csengőgombja számára.',
+        wires: ['Bemenet (230V): L (barna) és N (kék)', 'Kimenet (8/12V): 2 vékony vezeték a csengőhöz']
+      },
+      {
+        id: '2', row: 'top', span: 1, brand: 'Legrand', rating: 'SPD T2', sub: 'Túlfeszültség véd.', state: true, toggleable: false,
+        title: '2. modul — Túlfeszültség-levezető (Prepäťová ochrana)',
+        desc: 'Villámcsapás vagy hálózati túlfeszültség esetén a másodperc töredéke alatt levezeti a káros túláramot a zöld-sárga földelő sínbe, megvédve a tévét, számítógépet, kazánt.',
+        wires: ['Párhuzamosan kötve: L (barna), N (kék) és vastag PE (zöld-sárga) a földelő sínre']
+      },
+      {
+        id: '3', row: 'top', span: 1, brand: 'Legrand', rating: '32A', sub: 'Főkapcsoló', state: true, toggleable: true, isMain: true,
+        title: '3. modul — 32A Főkapcsoló (Hlavný vypínač)',
+        desc: 'A lakás központi áramtalanító kapcsolója. Ha lekapcsolod, az egész lakásban megszűnik az áramellátás.',
+        wires: ['Bejövő főkábel: L (barna) és N (kék)', 'Kimenet: Továbbmegy a 4–5-ös FI-relé tetejébe']
+      },
+      {
+        id: '4–5', row: 'top', span: 2, brand: 'Legrand', rating: '25A / 30mA', sub: 'FI-relé (Prúdový chránič)', state: true, toggleable: true, isRcd: true,
+        title: '4–5. modul — FI-relé / Áram-védőkapcsoló (25A, 30mA)',
+        desc: 'Életvédelmi relé! Folyamatosan összehasonlítja a bemenő (L) és visszatérő (N) áramot. Ha 30 mA-nél több szökik el (pl. áramütésnél), 0,03 mp alatt lekapcsolja az egész lakást.',
+        wires: ['Be: L és N a főkapcsolóból', 'Ki (N): Kék gyűjtősínre', 'Ki (L): Fésűsínekre (6–20. biztosítékok)']
+      },
+      {
+        id: '6', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Konyha + Hűtő', state: true, toggleable: true,
+        title: '6. modul — B16 Kismegszakító: Konyhai konnektorok + Hűtő',
+        desc: '2,5 mm²-es rézvezetékkel szerelt konnektorkör a konyhapulthoz és a hűtőszekrényhez (max. 3680 W terhelhetőség).',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a konyhába', 'Kék (N) és Zöld-sárga (PE) a felső sínekből']
+      },
+      {
+        id: '7', row: 'top', span: 1, brand: 'Legrand', rating: 'C16', sub: 'Főzőlap', state: true, toggleable: true,
+        title: '7. modul — C16 Kismegszakító: Elektromos / Indukciós főzőlap',
+        desc: 'Külön dedikált kör a főzőlapnak. A „C” karakterisztika miatt elviseli a főzőlap bekapcsoláskori nagyobb áramlökését anélkül, hogy tévesen leoldana.',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) közvetlenül a főzőlaphoz']
+      },
+      {
+        id: '8', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Sütő', state: true, toggleable: true,
+        title: '8. modul — B16 Kismegszakító: Elektromos sütő',
+        desc: 'Különálló konnektor és önálló 2,5 mm²-es kábel a beépített sütőnek, hogy ne terhelje a többi konyhai gépet.',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a sütőhöz']
+      },
+      {
+        id: '9', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Mosogatógép', state: true, toggleable: true,
+        title: '9. modul — B16 Kismegszakító: Mosogatógép',
+        desc: 'Önálló 16 Amperes kör a mosogatógép fűtőszálának biztonságos ellátásához.',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a mosogatógéphez']
+      },
+      {
+        id: '10', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Fürdő + WC konn.', state: true, toggleable: true,
+        title: '10. modul — B16 Kismegszakító: Fürdőszoba és WC konnektorok',
+        desc: 'A fürdőszobai dugaljak (hajszárító, borotva) külön köre, amelyet az FI-relé kiemelten véd a nedves környezet miatt.',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a fürdőszobába']
+      },
+      {
+        id: '11', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Mosógép', state: true, toggleable: true,
+        title: '11. modul — B16 Kismegszakító: Mosógép',
+        desc: 'Külön dedikált kör a mosógépnek (2,5 mm² rézvezeték).',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a mosógép konnektorához']
+      },
+      {
+        id: '12', row: 'top', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Erkély konn.', state: true, toggleable: true,
+        title: '12. modul — B16 Kismegszakító: Erkély konnektor',
+        desc: 'Kültéri/erkély dugalj köre.',
+        wires: ['Alulról: Fésűsín (L)', 'Felülről: 2,5 mm² barna (L) az erkélyre']
+      },
+      {
+        id: '13', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Kisszoba konn.', state: true, toggleable: true,
+        title: '13. modul — B16 Kismegszakító: Kisszoba konnektorok',
+        desc: 'A kisszoba összes fali konnektorát tápláló 16 Amperes kör (2,5 mm² rézvezeték).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a kisszobába']
+      },
+      {
+        id: '14', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Hálószoba konn.', state: true, toggleable: true,
+        title: '14. modul — B16 Kismegszakító: Hálószoba konnektorok',
+        desc: 'A hálószoba konnektorainak köre (2,5 mm² rézvezeték).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a hálószobába']
+      },
+      {
+        id: '15', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Gyerekszoba konn.', state: true, toggleable: true,
+        title: '15. modul — B16 Kismegszakító: Gyerekszoba konnektorok',
+        desc: 'A gyerekszoba konnektorainak köre (2,5 mm² rézvezeték).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a gyerekszobába']
+      },
+      {
+        id: '16', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B16', sub: 'Nappali konn.', state: true, toggleable: true,
+        title: '16. modul — B16 Kismegszakító: Nappali konnektorok',
+        desc: 'A nappali szoba konnektorainak köre (TV, hifi, állólámpa – 2,5 mm² rézvezeték).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 2,5 mm² barna (L) a nappaliba']
+      },
+      {
+        id: '17', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B10', sub: 'Világítás 1.', state: true, toggleable: true,
+        title: '17. modul — B10 Kismegszakító: Háló + Kisszoba + Konyha világítás',
+        desc: 'Világítási kör 1,5 mm²-es rézvezetékkel szerelve, ezért 10 Amperes biztosíték védi (max. 2300 W).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 1,5 mm² barna (L) a villanykapcsolókhoz']
+      },
+      {
+        id: '18', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B10', sub: 'Világítás 2.', state: true, toggleable: true,
+        title: '18. modul — B10 Kismegszakító: Előszoba + Nappali + Gyerekszoba világítás',
+        desc: 'Második világítási kör 1,5 mm²-es rézvezetékkel és 10 Amperes védelemmel.',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 1,5 mm² barna (L) a kapcsolókhoz']
+      },
+      {
+        id: '19', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B10', sub: 'Erkély világítás', state: false, toggleable: true,
+        title: '19. modul — B10 Kismegszakító: Erkély világítás (Képen lekapcsolva)',
+        desc: 'Az erkély lámpájának külön 10 Amperes kismegszakítója. A fotódon ez a kar lefelé áll (ki van kapcsolva).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 1,5 mm² barna (L) az erkély kapcsolójához']
+      },
+      {
+        id: '20', row: 'bottom', span: 1, brand: 'Legrand', rating: 'B10', sub: 'Fürdő + WC vil. + vent.', state: true, toggleable: true,
+        title: '20. modul — B10 Kismegszakító: Fürdő + WC világítás és elszívó ventilátorok',
+        desc: 'A vizes helyiségek lámpáit és a páraelszívó ventilátorokat tápláló 10 Amperes kör (1,5 mm² rézvezeték).',
+        wires: ['Alulról: Alsó fésűsín (L)', 'Felülről: 1,5 mm² barna (L) a fürdő/WC kapcsolóihoz']
+      }
+    ];
+
+    const extraInfo = {
+      pe: {
+        title: 'Zöld-sárga Gyűjtősín (PE — Védőföldelés)',
+        desc: 'A biztosítékszekrény tetején található sárgaréz sín. Ide érkezik a ház fő földelőszondájáról jövő vastag zöld-sárga kábel, és innen indul ki minden egyes konnektor és lámpa zöld-sárga védővezetéke. Semmilyen kapcsolón nem megy át!',
+        wires: ['Vezeték színe: Zöld-sárga (PE)', 'Keresztmetszet: 2,5 mm² (konnektorok), 1,5 mm² (világítás)']
+      },
+      n: {
+        title: 'Kék Gyűjtősín (N — Nulla sín)',
+        desc: 'Kizárólag a 4–5-ös FI-relé (Prúdový chránič) kimenetéből kapja a nullát! A lakás összes konnektorának és lámpájának kék vezetéke ide van bekötve. Nem érhet össze az FI-relé előtti kék vezetékkel!',
+        wires: ['Vezeték színe: Kék (N)', 'Csatlakozás: Közvetlenül az FI-relé N kimenetéről']
+      },
+      combTop: {
+        title: 'Felső sor Réz Fésűsín (Fázis elosztó)',
+        desc: 'Egy szigetelt műanyag sínbe öntött réz fésű, amely alulról egyszerre összeköti a 6, 7, 8, 9, 10, 11 és 12-es kismegszakítók fázis bemenetét, így nem kell külön-külön átkötő drótokat hajtogatni.',
+        wires: ['Vezeték színe: Barna / Fekete (L)', 'Táplálás: A 4–5-ös FI-relé fázis kimenetéről']
+      },
+      combBottom: {
+        title: 'Alsó sor Réz Fésűsín (Fázis elosztó)',
+        desc: 'A felső sorból egy vastag (általában 6 mm² vagy 10 mm²) barna átkötő vezetékkel jut le a fázis az alsó sorba, ahol ez a fésűsín táplálja meg egyszerre a 13–20-as kismegszakítókat.',
+        wires: ['Vezeték színe: Barna / Fekete (L)', 'Táplálás: Átkötéssel a felső sorból']
+      }
+    };
+
+    let selectedId = null;
+
+    function renderRails() {
+      const topRail = document.getElementById('topRail');
+      const bottomRail = document.getElementById('bottomRail');
+      topRail.innerHTML = '';
+      bottomRail.innerHTML = '';
+
+      const mainMod = modules.find(m => m.isMain);
+      const rcdMod = modules.find(m => m.isRcd);
+      const powerAvailable = mainMod.state && rcdMod.state;
+
+      modules.forEach(mod => {
+        const el = document.createElement('div');
+        el.className = 'module' + (mod.span === 2 ? ' double' : '') + (selectedId === mod.id ? ' selected' : '');
+        el.onclick = () => selectItem(mod.id);
+
+        const isActive = mod.state && (mod.isMain || mod.isRcd || powerAvailable);
+        let leverHtml = '';
+        if (mod.toggleable) {
+          const leverClass = mod.isMain ? (mod.state ? 'main' : 'off') : (mod.state ? 'on' : 'off');
+          leverHtml = `<div class="switch-lever ${leverClass}" onclick="event.stopPropagation(); toggleModule('${mod.id}')">${mod.state ? 'BE' : 'KI'}</div>`;
+        } else {
+          leverHtml = `<div style="font-size:0.65rem; font-weight:700; color:#64748b;">FIX</div>`;
+        }
+
+        const testHtml = mod.isRcd
+          ? `<button class="test-btn" onclick="event.stopPropagation(); triggerRcdTest()">T (Teszt)</button>`
+          : '';
+
+        el.innerHTML = `
+          <div class="mod-num">${mod.id}</div>
+          <div class="mod-brand">${mod.brand}</div>
+          <div class="mod-rating">${mod.rating}</div>
+          ${testHtml}
+          ${leverHtml}
+          <div class="mod-sub">${mod.sub}</div>
+        `;
+
+        if (mod.row === 'top') {
+          topRail.appendChild(el);
+        } else {
+          bottomRail.appendChild(el);
+        }
+      });
+
+      // 4 üres vakfedél az alsó sor végére (21-24-es hely)
+      for (let i = 21; i <= 24; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'module blank';
+        blank.innerHTML = `<div class="mod-num">${i}</div><div class="mod-sub">Üres hely<br>(Vakfedél)</div>`;
+        bottomRail.appendChild(blank);
+      }
+
+      updateStatusBanner();
+    }
+
+    function selectItem(id) {
+      selectedId = id;
+      document.querySelectorAll('.busbar').forEach(b => b.classList.remove('selected'));
+      if (id === 'pe') document.getElementById('peBusbar').classList.add('selected');
+      if (id === 'n') document.getElementById('nBusbar').classList.add('selected');
+
+      const item = modules.find(m => m.id === id) || extraInfo[id];
+      if (item) {
+        document.getElementById('detailTitle').textContent = item.title;
+        document.getElementById('detailDesc').textContent = item.desc;
+        const wiresDiv = document.getElementById('detailWires');
+        wiresDiv.innerHTML = item.wires.map(w => `<div style="font-size:0.82rem; color:#93c5fd; margin-top:4px;">• ${w}</div>`).join('');
+      }
+      renderRails();
+    }
+
+    function toggleModule(id) {
+      const mod = modules.find(m => m.id === id);
+      if (mod && mod.toggleable) {
+        mod.state = !mod.state;
+        selectItem(id);
+      }
+    }
+
+    function triggerRcdTest() {
+      const rcd = modules.find(m => m.isRcd);
+      rcd.state = false;
+      selectItem('4–5');
+    }
+
+    function updateStatusBanner() {
+      const mainMod = modules.find(m => m.isMain);
+      const rcdMod = modules.find(m => m.isRcd);
+      const banner = document.getElementById('statusBanner');
+
+      if (!mainMod.state) {
+        banner.className = 'status-banner tripped';
+        banner.textContent = 'Rendszer állapota: ÁRAMTALANÍTVA (A 32A Főkapcsoló le van kapcsolva)';
+      } else if (!rcdMod.state) {
+        banner.className = 'status-banner tripped';
+        banner.textContent = 'Rendszer állapota: FI-RELÉ LEOLDOTT! (Nincs áram a lakásban — kapcsold vissza a 4–5-ös modult)';
+      } else {
+        banner.className = 'status-banner';
+        banner.textContent = 'Rendszer állapota: ÜZEMKÉSZ (Főkapcsoló és 30mA FI-relé bekapcsolva)';
+      }
+    }
+
+    function toggleCover() {
+      document.getElementById('coverOverlay').classList.toggle('visible');
+    }
+
+    document.getElementById('toggleCoverBtn').onclick = toggleCover;
+    document.getElementById('testRcdBtn').onclick = triggerRcdTest;
+    document.getElementById('resetAllBtn').onclick = () => {
+      modules.forEach(m => { if (m.toggleable) m.state = true; });
+      renderRails();
+    };
+
+    renderRails();
+  </script>
+</body>
+</html>
