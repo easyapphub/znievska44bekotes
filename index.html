@@ -59,7 +59,7 @@
       <p>Kattints bármelyik modulra vagy sínre: azonnal kivilágosodnak a kapcsolódó vezetékek!</p>
     </div>
     <div class="controls">
-      <button id="testRcdBtn">FI-relé „T” Teszt</button>
+      <button id="testRcdBtn">Áram-védőkapcsoló „T” Teszt</button>
       <button id="resetBtn">Minden visszakapcsolása</button>
     </div>
   </header>
@@ -85,13 +85,13 @@
           <line x1="105" y1="8" x2="127" y2="8" stroke="#2563eb" stroke-width="4" />
           <text x="133" y="12" font-size="11" font-weight="700" fill="#1e293b">Nulla (N)</text>
           <line x1="210" y1="8" x2="232" y2="8" stroke="url(#peStripe)" stroke-width="5" />
-          <text x="238" y="12" font-size="11" font-weight="700" fill="#1e293b">Föld (PE)</text>
+          <text x="238" y="12" font-size="11" font-weight="700" fill="#1e293b">Védőföld (PE)</text>
         </g>
 
         <!-- Bejövő főkábel -->
         <rect x="30" y="52" width="220" height="42" rx="8" fill="#1e293b" />
         <text x="42" y="71" font-size="11" font-weight="800" fill="#f8fafc">BEJÖVŐ FŐKÁBEL</text>
-        <text x="42" y="86" font-size="10" fill="#94a3b8">L, N, PE a villanyórától</text>
+        <text x="42" y="86" font-size="10" fill="#94a3b8">Fázis (L), Nulla (N), Védőföld (PE)</text>
 
         <!-- PE Sín -->
         <g id="peBusGroup" class="svg-clickable" onclick="selectItem('pe')">
@@ -103,8 +103,8 @@
         <!-- N Sín -->
         <g id="nBusGroup" class="svg-clickable" onclick="selectItem('n')">
           <rect x="580" y="52" width="310" height="42" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5" />
-          <text x="592" y="71" font-size="11" font-weight="800" fill="#1e3a8a">KÉK SÍN (N Nulla gyűjtősín FI-relé után)</text>
-          <text x="592" y="86" font-size="10" fill="#1d4ed8">FI-relé N kimenet + lakás kék szálai</text>
+          <text x="592" y="71" font-size="11" font-weight="800" fill="#1e3a8a">KÉK SÍN (N Nulla gyűjtősín)</text>
+          <text x="592" y="86" font-size="10" fill="#1d4ed8">Áram-védőkapcsoló N kimenet + lakás kék szálai</text>
         </g>
 
         <!-- VEZETÉKEK RÉTEG -->
@@ -112,10 +112,10 @@
 
         <!-- Sínek háttere -->
         <rect x="25" y="170" width="870" height="145" rx="10" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2" />
-        <text x="35" y="163" font-size="11" font-weight="800" fill="#475569">FELSŐ DIN SÍN (1–12. MODUL)</text>
+        <text x="35" y="163" font-size="11" font-weight="800" fill="#475569">FELSŐ SÍN (1–12. MODUL)</text>
 
         <rect x="25" y="445" width="870" height="145" rx="10" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2" />
-        <text x="35" y="438" font-size="11" font-weight="800" fill="#475569">ALSÓ DIN SÍN (13–20. MODUL + 4 VAKFEDÉL)</text>
+        <text x="35" y="438" font-size="11" font-weight="800" fill="#475569">ALSÓ SÍN (13–20. MODUL + 4 VAKFEDÉL)</text>
 
         <!-- MODULOK RÉTEG -->
         <g id="modulesLayer"></g>
@@ -130,14 +130,14 @@
     <!-- Jobb oldali panel -->
     <div class="info-panel">
       <div id="statusBanner" class="status-banner">
-        Rendszer állapota: ÜZEMKÉSZ (Főkapcsoló + FI-relé bekapcsolva)
+        Rendszer állapota: ÜZEMKÉSZ (Főkapcsoló + Áram-védőkapcsoló bekapcsolva)
       </div>
 
       <div class="card">
         <h2>Vezetékek szűrése</h2>
         <div class="filter-pills">
           <button class="pill active" onclick="setFilter('all', this)">Összes vezeték</button>
-          <button class="pill" onclick="setFilter('phase', this)">Csak Fázis (L) & Fésűsínek</button>
+          <button class="pill" onclick="setFilter('phase', this)">Csak Fázis (L) &amp; Fésűsínek</button>
           <button class="pill" onclick="setFilter('neutral', this)">Csak Nulla (N)</button>
           <button class="pill" onclick="setFilter('pe', this)">Csak Védőföld (PE)</button>
         </div>
@@ -157,10 +157,10 @@
             <strong>A 3 vezeték a falban:</strong> Minden egyes konnektortól és kapcsolótól ez a három testvér halad együtt: a <span class="wire-tag t-l">Fázis (barna)</span>, a <span class="wire-tag t-n">Nulla (kék)</span> és a <span class="wire-tag t-pe">Földelés (zöld-sárga)</span>.
           </li>
           <li>
-            <strong>A Fázis (L):</strong> Megérkezik a szekrénybe, és belecsatlakozik abba a <strong>kismegszakítóba (ističbe)</strong>, amelyik az adott szobát vagy konnektor-kört védi. Ha abban a szobában túlterhelés van, akkor csak az a kismegszakító csap le.
+            <strong>A Fázis (L):</strong> Megérkezik a szekrénybe, és belecsatlakozik abba a <strong>kismegszakítóba</strong>, amelyik az adott szobát vagy konnektor-kört védi. Ha abban a szobában túlterhelés van, akkor csak az a kismegszakító csap le.
           </li>
           <li>
-            <strong>A Nulla (N):</strong> Nem a kismegszakítóba megy, hanem a <strong>kék gyűjtősínbe</strong>, amelyik közvetlenül a <strong>prúdový chránič (FI-relé)</strong> kimenetéről kapja a jelet. A chránič ezen keresztül figyeli, hogy mennyi áram érkezik vissza a lakásból.
+            <strong>A Nulla (N):</strong> Nem a kismegszakítóba megy, hanem a <strong>kék gyűjtősínbe</strong>, amelyik közvetlenül az <strong>áram-védőkapcsoló (FI-relé)</strong> kimenetéről kapja a jelet. Az áram-védőkapcsoló ezen keresztül figyeli, hogy mennyi áram érkezik vissza a lakásból.
           </li>
           <li>
             <strong>A Védőföldelés (PE):</strong> Teljesen független az előző kettőtől: befut a szekrény <strong>zöld-sárga sínjébe</strong>, onnan pedig egy vastag gerincvezetéken keresztül lemegy a ház fő földelőszondájához, ami a földben van elásva.
@@ -172,32 +172,32 @@
 
   <script>
     const modules = [
-      { id: '1', row: 'top', col: 0, rating: '8/12V~', sub: 'Csengő', state: true, toggleable: false, title: '1. Csengőtrafó', desc: '8-12V törpefeszültséget ad a csengőnek.', wires: ['Bemenet: L és N', 'Kimenet: 8/12V a csengőhöz'] },
-      { id: '2', row: 'top', col: 1, rating: 'SPD T2', sub: 'Túlfesz.', state: true, toggleable: false, title: '2. Túlfeszültség-levezető', desc: 'Elvezeti a túláramot villámcsapáskor.', wires: ['Bekötés: L, N és PE a földelő sínre'] },
-      { id: '3', row: 'top', col: 2, rating: '32A', sub: 'Főkapcs.', state: true, toggleable: true, isMain: true, title: '3. 32A Főkapcsoló', desc: 'A lakás fő áramtalanító kapcsolója.', wires: ['Be: Főkábel L és N', 'Ki: FI-relé tetejébe'] },
-      { id: '4-5', row: 'top', col: 3, span: 2, rating: '25A/30mA', sub: 'FI-relé', state: true, toggleable: true, isRcd: true, title: '4–5. FI-relé (Áram-védőkapcsoló)', desc: 'Életvédelmi relé, hiba esetén lekapcsol.', wires: ['Be: Főkapcsolóból', 'Ki N: Kék sínre', 'Ki L: Fésűsínekre'] },
-      { id: '6', row: 'top', col: 5, rating: 'B16', sub: 'Konyha', state: true, toggleable: true, title: '6. Konyha konnektorok', desc: '2,5 mm² rézvezeték.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a konyhába'] },
-      { id: '7', row: 'top', col: 6, rating: 'C16', sub: 'Főzőlap', state: true, toggleable: true, title: '7. Főzőlap', desc: 'C karakterisztika indítási lökésekhez.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) főzőlaphoz'] },
-      { id: '8', row: 'top', col: 7, rating: 'B16', sub: 'Sütő', state: true, toggleable: true, title: '8. Sütő', desc: 'Sütő külön köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) sütőhöz'] },
-      { id: '9', row: 'top', col: 8, rating: 'B16', sub: 'Mosogatóg.', state: true, toggleable: true, title: '9. Mosogatógép', desc: 'Mosogatógép köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) mosogatógéphez'] },
-      { id: '10', row: 'top', col: 9, rating: 'B16', sub: 'Fürdő+WC', state: true, toggleable: true, title: '10. Fürdő & WC konn.', desc: 'Vizes helyiségek konnektorai.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) fürdőbe'] },
-      { id: '11', row: 'top', col: 10, rating: 'B16', sub: 'Mosógép', state: true, toggleable: true, title: '11. Mosógép', desc: 'Mosógép köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) mosógéphez'] },
-      { id: '12', row: 'top', col: 11, rating: 'B16', sub: 'Erkély k.', state: true, toggleable: true, title: '12. Erkély konnektor', desc: 'Erkély dugalj.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) erkélyre'] },
+      { id: '1', row: 'top', col: 0, rating: '8/12V~', sub: 'Csengő', state: true, toggleable: false, title: '1. Csengőtrafó', desc: '8–12 V törpefeszültséget ad a csengőnek.', wires: ['Bemenet: Fázis (L) és Nulla (N)', 'Kimenet: 8/12 V a csengőhöz'] },
+      { id: '2', row: 'top', col: 1, rating: 'T2 véd.', sub: 'Túlfesz.', state: true, toggleable: false, title: '2. Túlfeszültség-levezető', desc: 'Elvezeti a túláramot villámcsapáskor vagy hálózati túlfeszültségnél.', wires: ['Bekötés: Fázis (L), Nulla (N) és Védőföld (PE) a földelő sínre'] },
+      { id: '3', row: 'top', col: 2, rating: '32A', sub: 'Főkapcs.', state: true, toggleable: true, isMain: true, title: '3. 32 A Főkapcsoló', desc: 'A lakás fő áramtalanító kapcsolója.', wires: ['Be: Főkábel Fázis (L) és Nulla (N)', 'Ki: Áram-védőkapcsoló tetejébe'] },
+      { id: '4-5', row: 'top', col: 3, span: 2, rating: '25A/30mA', sub: 'ÁVK relé', state: true, toggleable: true, isRcd: true, title: '4–5. Áram-védőkapcsoló (FI-relé)', desc: 'Életvédelmi relé: szivárgó áram (hiba) esetén 0,03 mp alatt lekapcsolja az egész lakást.', wires: ['Be: Főkapcsolóból', 'Ki Nulla (N): Kék sínre', 'Ki Fázis (L): Fésűsínekre'] },
+      { id: '6', row: 'top', col: 5, rating: 'B16', sub: 'Konyha', state: true, toggleable: true, title: '6. Konyhai konnektorok + hűtő', desc: '2,5 mm² rézvezeték (max. 16 A).', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a konyhába'] },
+      { id: '7', row: 'top', col: 6, rating: 'C16', sub: 'Főzőlap', state: true, toggleable: true, title: '7. Főzőlap', desc: 'C karakterisztika a nagyobb indítási áramlökésekhez.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a főzőlaphoz'] },
+      { id: '8', row: 'top', col: 7, rating: 'B16', sub: 'Sütő', state: true, toggleable: true, title: '8. Elektromos sütő', desc: 'A sütő külön dedikált köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a sütőhöz'] },
+      { id: '9', row: 'top', col: 8, rating: 'B16', sub: 'Mosogatóg.', state: true, toggleable: true, title: '9. Mosogatógép', desc: 'A mosogatógép önálló köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a mosogatógéphez'] },
+      { id: '10', row: 'top', col: 9, rating: 'B16', sub: 'Fürdő+WC', state: true, toggleable: true, title: '10. Fürdő és WC konnektorok', desc: 'A vizes helyiségek konnektorai.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a fürdőbe'] },
+      { id: '11', row: 'top', col: 10, rating: 'B16', sub: 'Mosógép', state: true, toggleable: true, title: '11. Mosógép', desc: 'A mosógép önálló köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) a mosógéphez'] },
+      { id: '12', row: 'top', col: 11, rating: 'B16', sub: 'Erkély k.', state: true, toggleable: true, title: '12. Erkély konnektor', desc: 'Az erkélyi dugalj köre.', wires: ['Alul: Fésűsín (L)', 'Felül: Barna (L) az erkélyre'] },
 
       // Alsó sor
-      { id: '13', row: 'bottom', col: 0, rating: 'B16', sub: 'Kisszoba', state: true, toggleable: true, title: '13. Kisszoba konn.', desc: 'Kisszoba dugaljak.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) kisszobába'] },
-      { id: '14', row: 'bottom', col: 1, rating: 'B16', sub: 'Hálószoba', state: true, toggleable: true, title: '14. Hálószoba konn.', desc: 'Hálószoba dugaljak.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) hálóba'] },
-      { id: '15', row: 'bottom', col: 2, rating: 'B16', sub: 'Gyereksz.', state: true, toggleable: true, title: '15. Gyerekszoba konn.', desc: 'Gyerekszoba dugaljak.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) gyerekszobába'] },
-      { id: '16', row: 'bottom', col: 3, rating: 'B16', sub: 'Nappali', state: true, toggleable: true, title: '16. Nappali konn.', desc: 'Nappali dugaljak.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) nappaliba'] },
-      { id: '17', row: 'bottom', col: 4, rating: 'B10', sub: 'Világ. 1', state: true, toggleable: true, title: '17. Világítás 1.', desc: 'Háló + kisszoba + konyha vil.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5mm² Barna (L) kapcsolókhoz'] },
-      { id: '18', row: 'bottom', col: 5, rating: 'B10', sub: 'Világ. 2', state: true, toggleable: true, title: '18. Világítás 2.', desc: 'Előszoba + nappali + gyerekszoba vil.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5mm² Barna (L) kapcsolókhoz'] },
-      { id: '19', row: 'bottom', col: 6, rating: 'B10', sub: 'Erkély vil.', state: false, toggleable: true, title: '19. Erkély világítás', desc: 'Lekapcsolt erkély világítás.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5mm² Barna (L) erkélyre'] },
-      { id: '20', row: 'bottom', col: 7, rating: 'B10', sub: 'Fürdő vil.', state: true, toggleable: true, title: '20. Fürdő vil. + vent.', desc: 'Fürdő/WC vil. és ventilátorok.', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5mm² Barna (L) fürdőbe'] }
+      { id: '13', row: 'bottom', col: 0, rating: 'B16', sub: 'Kisszoba', state: true, toggleable: true, title: '13. Kisszoba konnektorok', desc: 'A kisszoba dugaljai (2,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) a kisszobába'] },
+      { id: '14', row: 'bottom', col: 1, rating: 'B16', sub: 'Hálószoba', state: true, toggleable: true, title: '14. Hálószoba konnektorok', desc: 'A hálószoba dugaljai (2,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) a hálószobába'] },
+      { id: '15', row: 'bottom', col: 2, rating: 'B16', sub: 'Gyereksz.', state: true, toggleable: true, title: '15. Gyerekszoba konnektorok', desc: 'A gyerekszoba dugaljai (2,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) a gyerekszobába'] },
+      { id: '16', row: 'bottom', col: 3, rating: 'B16', sub: 'Nappali', state: true, toggleable: true, title: '16. Nappali konnektorok', desc: 'A nappali dugaljai (2,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: Barna (L) a nappaliba'] },
+      { id: '17', row: 'bottom', col: 4, rating: 'B10', sub: 'Világ. 1', state: true, toggleable: true, title: '17. Világítás 1. kör', desc: 'Hálószoba + kisszoba + konyha világítás (1,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5 mm² Barna (L) a kapcsolókhoz'] },
+      { id: '18', row: 'bottom', col: 5, rating: 'B10', sub: 'Világ. 2', state: true, toggleable: true, title: '18. Világítás 2. kör', desc: 'Előszoba + nappali + gyerekszoba világítás (1,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5 mm² Barna (L) a kapcsolókhoz'] },
+      { id: '19', row: 'bottom', col: 6, rating: 'B10', sub: 'Erkély vil.', state: false, toggleable: true, title: '19. Erkély világítás', desc: 'Lekapcsolt állapotú erkély világítás (1,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5 mm² Barna (L) az erkélyre'] },
+      { id: '20', row: 'bottom', col: 7, rating: 'B10', sub: 'Fürdő vil.', state: true, toggleable: true, title: '20. Fürdő világítás + ventilátorok', desc: 'Fürdő és WC világítás + elszívó ventilátorok (1,5 mm²).', wires: ['Alul: Alsó fésűsín (L)', 'Felül: 1,5 mm² Barna (L) a fürdőbe'] }
     ];
 
     const busInfo = {
-      pe: { title: 'Zöld-sárga Gyűjtősín (PE)', desc: 'Ide fut be a bejövő földelés, és innen oszlik szét a lakásba.', wires: ['Bejövő PE', 'Kimenő PE szálak'] },
-      n: { title: 'Kék Gyűjtősín (N)', desc: 'Az FI-reléből jövő nulla sín.', wires: ['Bejövő N az FI-reléből', 'Kimenő N szálak'] }
+      pe: { title: 'Zöld-sárga Gyűjtősín (PE — Védőföldelés)', desc: 'Ide fut be a bejövő fő földelés, és innen oszlik szét a lakás összes helyiségébe.', wires: ['Bejövő fő védőföldelés (PE)', 'Kimenő védőföld (PE) szálak a szobákba'] },
+      n: { title: 'Kék Gyűjtősín (N — Nulla sín)', desc: 'Az áram-védőkapcsolóból kijövő nulla sín, innen kapja a nullát az összes fogyasztó.', wires: ['Bejövő Nulla (N) az áram-védőkapcsolóból', 'Kimenő Nulla (N) szálak a szobákba'] }
     };
 
     let selectedId = null;
@@ -226,11 +226,11 @@
       addWire('M 135 94 L 135 128 L 195 128 L 195 170', '#92400e', 4.5, 'phase', '3');
       addWire('M 155 94 L 155 118 L 215 118 L 215 170', '#2563eb', 4.5, 'neutral', '3');
 
-      // 3-as Főkapcsolóból -> 4-5 FI-relébe
+      // 3-as Főkapcsolóból -> 4-5 Áram-védőkapcsolóba
       addWire('M 195 306 L 195 330 L 265 330 L 265 170', '#92400e', 4.5, 'phase', '4-5');
       addWire('M 215 306 L 215 340 L 325 340 L 325 170', '#2563eb', 4.5, 'neutral', '4-5');
 
-      // FI-reléből Kék sínre és fésűsínekre
+      // Áram-védőkapcsolóból Kék sínre és fésűsínekre
       addWire('M 325 306 L 325 355 L 560 355 L 560 115 L 610 115 L 610 94', '#2563eb', 4.5, 'neutral', 'n');
       addWire('M 265 306 L 265 322 L 850 322', '#b45309', 5.5, 'phase', '4-5');
 
@@ -375,13 +375,13 @@
 
       if (!mainMod.state) {
         banner.className = 'status-banner tripped';
-        banner.textContent = 'Rendszer állapota: ÁRAMTALANÍTVA (A 32A Főkapcsoló le van kapcsolva)';
+        banner.textContent = 'Rendszer állapota: ÁRAMTALANÍTVA (A 32 A Főkapcsoló le van kapcsolva)';
       } else if (!rcdMod.state) {
         banner.className = 'status-banner tripped';
-        banner.textContent = 'Rendszer állapota: FI-RELÉ LEOLDOTT! (Nincs áram — kapcsold vissza a 4–5-ös modult)';
+        banner.textContent = 'Rendszer állapota: ÁRAM-VÉDŐKAPCSOLÓ LEOLDOTT! (Nincs áram — kapcsold vissza a 4–5-ös modult)';
       } else {
         banner.className = 'status-banner';
-        banner.textContent = 'Rendszer állapota: ÜZEMKÉSZ (Főkapcsoló + FI-relé bekapcsolva)';
+        banner.textContent = 'Rendszer állapota: ÜZEMKÉSZ (Főkapcsoló + Áram-védőkapcsoló bekapcsolva)';
       }
     }
 
